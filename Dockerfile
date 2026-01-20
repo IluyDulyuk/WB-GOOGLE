@@ -26,8 +26,6 @@ RUN npm install --only=production
 
 # Копируем скомпилированные файлы из первого этапа
 COPY --from=builder /app/dist ./dist
-# Копируем файл ключей Google (если он не в .env)
-COPY google-credentials.json ./google-credentials.json
 
 # Запуск приложения
 CMD ["node", "dist/main"]
