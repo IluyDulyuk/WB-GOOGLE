@@ -10,13 +10,27 @@ export class GoogleService {
 	private sheets
 
 	public constructor(private readonly configService: ConfigService) {
-		const auth = new google.auth.GoogleAuth({
-			keyFile: this.configService.getOrThrow('GOOGLE_CREDENTIALS_JSON'),
-			scopes: [
-				'https://www.googleapis.com/auth/drive',
-				'https://www.googleapis.com/auth/spreadsheets'
-			]
-		})
+		let auth
+
+		if (this.configService.getOrThrow('NODE_ENV') === 'development') {
+			auth = new google.auth.GoogleAuth({
+				keyFile: path.join(process.cwd(), 'google-credentials.json'),
+				scopes: [
+					'https://www.googleapis.com/auth/drive',
+					'https://www.googleapis.com/auth/spreadsheets'
+				]
+			})
+		} else {
+			auth = new google.auth.GoogleAuth({
+				credentials: JSON.parse(
+					this.configService.getOrThrow('GOOGLE_AUTH_JSON')
+				),
+				scopes: [
+					'https://www.googleapis.com/auth/drive',
+					'https://www.googleapis.com/auth/spreadsheets'
+				]
+			})
+		}
 
 		this.drive = google.drive({ version: 'v3', auth })
 		this.sheets = google.sheets({ version: 'v4', auth })
@@ -116,7 +130,7 @@ export class GoogleService {
 				'=T9*0,15',
 				'',
 				'',
-				'=E9/O9',
+				funnelStatsDay[0].history[0].orderCount === 0 ? '0' : '=E9/O9',
 				stocks.data.items[0].metrics.stockCount
 			]
 
