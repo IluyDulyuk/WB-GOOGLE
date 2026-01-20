@@ -122,7 +122,7 @@ export class GoogleService {
 					stocks
 				)
 			} else {
-				const targetRow = skuRowIndex + 3
+				const targetRow = skuRowIndex + 4
 				await this.insertDataRow(
 					spreadsheetId,
 					targetRow,
