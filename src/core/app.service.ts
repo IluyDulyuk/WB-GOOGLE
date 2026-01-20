@@ -20,8 +20,10 @@ export class AppService {
 		await this.cron()
 	}
 
-	@Cron(CronExpression.EVERY_10_MINUTES)
+	@Cron(CronExpression.EVERY_30_MINUTES)
 	public async cron() {
+		// await sleep(1000 * 65)
+
 		this.logger.log('>>> Запуск синхронизации...')
 
 		const sheets = await this.googleService.getAllSheets(
@@ -35,63 +37,123 @@ export class AppService {
 		for (const sheet of sheets) {
 			const settings = await this.googleService.getSheetSettings(sheet.id)
 
-			if (!settings || settings.length === 0) continue
+			if (settings.length === 0) continue
 
-			const auctionCampaignId = settings[0] ? settings[0][0] : null
-			const arcCampaignId = settings[2] ? settings[1][0] : null
-			const sku = settings[2] ? settings[2][0] : null
-
-			if (
-				auctionCampaignId === null ||
-				arcCampaignId === null ||
-				sku === null
-			) {
-				continue
-			}
+			// const auctionCampaignId = settings[0] ? settings[0][0] : null
+			// const arcCampaignId = settings[2] ? settings[1][0] : null
+			// const sku = settings[2] ? settings[2][0] : null
 
 			this.logger.log('>>> Настроки для таблицы получены...')
-			this.logger.log('>>> Начинаю запрос данных с API WB...')
-			this.logger.log('>>> Запрашиваю auctionFullstats...')
 
-			const auctionFullstats = await this.wbService.getFullstats({
-				ids: [auctionCampaignId]
-			})
+			for (const settingsItem of settings) {
+				await sleep(1000 * 65)
 
-			await sleep(1000 * 65)
+				if (
+					settingsItem.auctionId === null ||
+					settingsItem.arcId === null ||
+					settingsItem.sku === null
+				) {
+					continue
+				}
 
-			this.logger.log('>>> Запрашиваю arcFullstats...')
+				this.logger.log('>>> Начинаю запрос данных с API WB...')
+				this.logger.log('>>> Запрашиваю auctionFullstats...')
 
-			const arcFullstats = await this.wbService.getFullstats({
-				ids: [arcCampaignId]
-			})
+				const auctionFullstats = await this.wbService.getFullstats({
+					ids: [settingsItem.auctionId]
+				})
 
-			this.logger.log('>>> Запрашиваю funnelStats...')
+				await sleep(1000 * 65)
 
-			const funnelStats = await this.wbService.getFunnelStats(sku)
+				this.logger.log('>>> Запрашиваю arcFullstats...')
 
-			this.logger.log('>>> Запрашиваю stocks...')
+				const arcFullstats = await this.wbService.getFullstats({
+					ids: [settingsItem.arcId]
+				})
 
-			const stocks = await this.wbService.getStocks(sku)
+				this.logger.log('>>> Запрашиваю funnelStats...')
 
-			if (
-				auctionFullstats === null ||
-				arcFullstats === null ||
-				funnelStats === null ||
-				stocks === null
-			) {
-				continue
+				const funnelStats = await this.wbService.getFunnelStats(
+					settingsItem.sku
+				)
+
+				this.logger.log('>>> Запрашиваю stocks...')
+
+				const stocks = await this.wbService.getStocks(settingsItem.sku)
+
+				if (
+					auctionFullstats === null ||
+					arcFullstats === null ||
+					funnelStats === null ||
+					stocks === null
+				) {
+					continue
+				}
+
+				this.logger.log('>>> Данные с API WB успешно получены...')
+				this.logger.log('>>> Начинаю обновление таблицы...')
+
+				await this.googleService.updateTable(
+					sheet.id,
+					settingsItem.sku,
+					auctionFullstats,
+					arcFullstats,
+					funnelStats,
+					stocks
+				)
 			}
 
-			this.logger.log('>>> Данные с API WB успешно получены...')
-			this.logger.log('>>> Начинаю обновление таблицы...')
+			// if (
+			// 	auctionCampaignId === null ||
+			// 	arcCampaignId === null ||
+			// 	sku === null
+			// ) {
+			// 	continue
+			// }
 
-			await this.googleService.updateTable(
-				sheet.id,
-				auctionFullstats,
-				arcFullstats,
-				funnelStats,
-				stocks
-			)
+			// this.logger.log('>>> Настроки для таблицы получены...')
+			// this.logger.log('>>> Начинаю запрос данных с API WB...')
+			// this.logger.log('>>> Запрашиваю auctionFullstats...')
+
+			// const auctionFullstats = await this.wbService.getFullstats({
+			// 	ids: [auctionCampaignId]
+			// })
+
+			// await sleep(1000 * 65)
+
+			// this.logger.log('>>> Запрашиваю arcFullstats...')
+
+			// const arcFullstats = await this.wbService.getFullstats({
+			// 	ids: [arcCampaignId]
+			// })
+
+			// this.logger.log('>>> Запрашиваю funnelStats...')
+
+			// const funnelStats = await this.wbService.getFunnelStats(sku)
+
+			// this.logger.log('>>> Запрашиваю stocks...')
+
+			// const stocks = await this.wbService.getStocks(sku)
+
+			// if (
+			// 	auctionFullstats === null ||
+			// 	arcFullstats === null ||
+			// 	funnelStats === null ||
+			// 	stocks === null
+			// ) {
+			// 	continue
+			// }
+
+			// this.logger.log('>>> Данные с API WB успешно получены...')
+			// this.logger.log('>>> Начинаю обновление таблицы...')
+
+			// await this.googleService.updateTable(
+			// 	sheet.id,
+			// 	auctionFullstats,
+			// 	arcFullstats,
+			// 	funnelStats,
+			// 	stocks
+			// )
 		}
 	}
 }
