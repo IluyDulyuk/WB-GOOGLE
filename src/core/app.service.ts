@@ -18,10 +18,11 @@ export class AppService {
 
 	async onApplicationBootstrap() {
 		this.scheduleDailySync()
+		this.cron()
 	}
 
 	private scheduleDailySync() {
-		const TARGET_HOUR = 13
+		const TARGET_HOUR = 11
 		const TARGET_MINUTE = 0
 
 		// 1. Получаем текущее время в Москве
