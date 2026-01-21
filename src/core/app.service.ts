@@ -17,8 +17,8 @@ export class AppService {
 	) {}
 
 	async onApplicationBootstrap() {
-		this.scheduleDailySync()
 		this.cron()
+		this.scheduleDailySync()
 	}
 
 	private scheduleDailySync() {
