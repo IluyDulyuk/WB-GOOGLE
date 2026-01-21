@@ -17,12 +17,59 @@ export class AppService {
 	) {}
 
 	async onApplicationBootstrap() {
-		await this.cron()
+		this.scheduleDailySync()
 	}
 
-	@Cron(CronExpression.EVERY_30_MINUTES)
+	private scheduleDailySync() {
+		const TARGET_HOUR = 13
+		const TARGET_MINUTE = 0
+
+		// 1. Получаем текущее время в Москве
+		const now = new Date()
+		const mskNow = new Date(
+			now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' })
+		)
+
+		// 2. Устанавливаем цель на сегодня 12:00 МСК
+		const target = new Date(mskNow)
+		target.setHours(TARGET_HOUR, TARGET_MINUTE, 0, 0)
+
+		// 3. Если сейчас уже больше 12:00, ставим цель на завтра
+		if (mskNow >= target) {
+			target.setDate(target.getDate() + 1)
+		}
+
+		// 4. Считаем разницу в мс
+		const delay = target.getTime() - mskNow.getTime()
+
+		const hours = Math.floor(delay / (1000 * 60 * 60))
+		const minutes = Math.floor((delay % (1000 * 60 * 60)) / (1000 * 60))
+
+		this.logger.log(
+			`[ПЛАНИРОВЩИК] Следующий запуск: ${target.toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}`
+		)
+		this.logger.log(`[ПЛАНИРОВЩИК] Ожидание: ${hours}ч. ${minutes}мин.`)
+
+		// 5. Запускаем таймер до первого выполнения
+		setTimeout(async () => {
+			await this.cron()
+
+			// 6. После первого выполнения запускаем интервал 24 часа
+			setInterval(
+				async () => {
+					await this.cron()
+				},
+				24 * 60 * 60 * 1000
+			)
+
+			this.logger.log(
+				'[ПЛАНИРОВЩИК] Установлен ежедневный цикл (раз в 24 часа)'
+			)
+		}, delay)
+	}
+
 	public async cron() {
-		// await sleep(1000 * 65)
+		await sleep(1000 * 120)
 
 		this.logger.log('>>> Запуск синхронизации...')
 
@@ -39,14 +86,10 @@ export class AppService {
 
 			if (settings.length === 0) continue
 
-			// const auctionCampaignId = settings[0] ? settings[0][0] : null
-			// const arcCampaignId = settings[2] ? settings[1][0] : null
-			// const sku = settings[2] ? settings[2][0] : null
-
 			this.logger.log('>>> Настроки для таблицы получены...')
 
 			for (const settingsItem of settings) {
-				await sleep(1000 * 65)
+				await sleep(1000 * 120)
 
 				if (
 					settingsItem.auctionId === null ||
@@ -63,7 +106,7 @@ export class AppService {
 					ids: [settingsItem.auctionId]
 				})
 
-				await sleep(1000 * 65)
+				await sleep(1000 * 120)
 
 				this.logger.log('>>> Запрашиваю arcFullstats...')
 
@@ -102,58 +145,6 @@ export class AppService {
 					stocks
 				)
 			}
-
-			// if (
-			// 	auctionCampaignId === null ||
-			// 	arcCampaignId === null ||
-			// 	sku === null
-			// ) {
-			// 	continue
-			// }
-
-			// this.logger.log('>>> Настроки для таблицы получены...')
-			// this.logger.log('>>> Начинаю запрос данных с API WB...')
-			// this.logger.log('>>> Запрашиваю auctionFullstats...')
-
-			// const auctionFullstats = await this.wbService.getFullstats({
-			// 	ids: [auctionCampaignId]
-			// })
-
-			// await sleep(1000 * 65)
-
-			// this.logger.log('>>> Запрашиваю arcFullstats...')
-
-			// const arcFullstats = await this.wbService.getFullstats({
-			// 	ids: [arcCampaignId]
-			// })
-
-			// this.logger.log('>>> Запрашиваю funnelStats...')
-
-			// const funnelStats = await this.wbService.getFunnelStats(sku)
-
-			// this.logger.log('>>> Запрашиваю stocks...')
-
-			// const stocks = await this.wbService.getStocks(sku)
-
-			// if (
-			// 	auctionFullstats === null ||
-			// 	arcFullstats === null ||
-			// 	funnelStats === null ||
-			// 	stocks === null
-			// ) {
-			// 	continue
-			// }
-
-			// this.logger.log('>>> Данные с API WB успешно получены...')
-			// this.logger.log('>>> Начинаю обновление таблицы...')
-
-			// await this.googleService.updateTable(
-			// 	sheet.id,
-			// 	auctionFullstats,
-			// 	arcFullstats,
-			// 	funnelStats,
-			// 	stocks
-			// )
 		}
 	}
 }
