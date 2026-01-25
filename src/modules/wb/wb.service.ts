@@ -61,7 +61,7 @@ export class WbService {
 		}
 	}
 
-	public async getStocks(nmId: string) {
+	public async getStocks(nmId: string, token) {
 		try {
 			const yesterdayDate = this.getYesterdayDate()
 
@@ -94,8 +94,7 @@ export class WbService {
 				},
 				{
 					headers: {
-						Authorization:
-							this.configService.getOrThrow<string>('WB_TOKEN'),
+						Authorization: token,
 						'Content-Type': 'application/json'
 					}
 				}

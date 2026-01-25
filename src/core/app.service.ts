@@ -223,7 +223,8 @@ export class AppService {
 					console.log(funnelStats)
 
 					const stocks = await this.wbService.getStocks(
-						settingsItem.sku
+						settingsItem.sku,
+						settings.token
 					)
 
 					console.log(stocks)
