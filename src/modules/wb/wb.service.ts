@@ -7,21 +7,19 @@ export class WbService {
 	public constructor(private readonly configService: ConfigService) {}
 
 	public async getFullstats(data) {
-		const { ids } = data
+		const { ids, date, token } = data
 
 		try {
 			const url = 'https://advert-api.wildberries.ru/adv/v3/fullstats'
-			const yesterdayDate = this.getYesterdayDate()
 
 			const response = await axios.get(url, {
 				params: {
 					ids: ids.join(','),
-					beginDate: yesterdayDate,
-					endDate: yesterdayDate
+					beginDate: date ? date : this.getYesterdayDate(),
+					endDate: date ? date : this.getYesterdayDate()
 				},
 				headers: {
-					Authorization:
-						this.configService.getOrThrow<string>('WB_TOKEN')
+					Authorization: token
 				}
 			})
 
@@ -33,10 +31,8 @@ export class WbService {
 		}
 	}
 
-	public async getFunnelStats(nmId: string) {
+	public async getFunnelStats(nmId: string, token: string, date?: string) {
 		try {
-			const yesterdayDate = this.getYesterdayDate()
-
 			const url =
 				'https://seller-analytics-api.wildberries.ru/api/analytics/v3/sales-funnel/products/history'
 
@@ -45,14 +41,13 @@ export class WbService {
 				{
 					nmIds: [Number(nmId)],
 					selectedPeriod: {
-						start: yesterdayDate,
-						end: yesterdayDate
+						start: date ? date : this.getYesterdayDate(),
+						end: date ? date : this.getYesterdayDate()
 					}
 				},
 				{
 					headers: {
-						Authorization:
-							this.configService.getOrThrow<string>('WB_TOKEN'),
+						Authorization: token,
 						'Content-Type': 'application/json'
 					}
 				}
