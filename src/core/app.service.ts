@@ -64,7 +64,7 @@ export class AppService {
 	}
 
 	// public async cron() {
-	// 	await sleep(1000 * 65)
+	// 	await sleep(1000 * 80)
 
 	// 	this.logger.log('>>> Запуск синхронизации...')
 
@@ -84,7 +84,7 @@ export class AppService {
 	// 		this.logger.log('>>> Настроки для таблицы получены...')
 
 	// 		for (const settingsItem of settings) {
-	// 			await sleep(1000 * 65)
+	// 			await sleep(1000 * 80)
 
 	// 			if (
 	// 				settingsItem.auctionId === null ||
@@ -101,7 +101,7 @@ export class AppService {
 	// 				ids: [settingsItem.auctionId]
 	// 			})
 
-	// 			await sleep(1000 * 65)
+	// 			await sleep(1000 * 80)
 
 	// 			this.logger.log('>>> Запрашиваю arcFullstats...')
 
@@ -162,7 +162,7 @@ export class AppService {
 			this.logger.log('>>> Настроки для таблицы получены...')
 
 			for (const settingsItem of settings.settings) {
-				await sleep(1000 * 65)
+				await sleep(1000 * 80)
 
 				if (!settings.token) {
 					continue
@@ -175,17 +175,16 @@ export class AppService {
 				this.logger.log('>>> Запрашиваю auctionFullstats...')
 
 				const datesArr = [
-					'2026-01-23'
-					// '2026-01-18',
-					// '2026-01-19',
-					// '2026-01-20',
-					// '2026-01-21',
-					// '2026-01-22',
-					// '2026-01-23'
+					'2026-01-24',
+					'2026-01-23',
+					'2026-01-22',
+					'2026-01-21',
+					'2026-01-20',
+					'2026-01-19'
 				]
 
 				for (const date of datesArr) {
-					await sleep(1000 * 65)
+					await sleep(1000 * 80)
 
 					const auctionFullstats = settingsItem.auctionId
 						? await this.wbService.getFullstats({
@@ -197,7 +196,7 @@ export class AppService {
 
 					console.log(auctionFullstats)
 
-					await sleep(1000 * 65)
+					await sleep(1000 * 80)
 
 					this.logger.log('>>> Запрашиваю arcFullstats...')
 
