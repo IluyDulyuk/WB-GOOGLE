@@ -183,7 +183,7 @@ export class AppService {
 					'2026-01-19'
 				]
 
-				for (const date of datesArr) {
+				for (const date of datesArr.reverse()) {
 					await sleep(1000 * 100)
 
 					const auctionFullstats = settingsItem.auctionId
