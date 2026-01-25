@@ -64,7 +64,7 @@ export class AppService {
 	}
 
 	// public async cron() {
-	// 	await sleep(1000 * 80)
+	// 	await sleep(1000 * 100)
 
 	// 	this.logger.log('>>> Запуск синхронизации...')
 
@@ -84,7 +84,7 @@ export class AppService {
 	// 		this.logger.log('>>> Настроки для таблицы получены...')
 
 	// 		for (const settingsItem of settings) {
-	// 			await sleep(1000 * 80)
+	// 			await sleep(1000 * 100)
 
 	// 			if (
 	// 				settingsItem.auctionId === null ||
@@ -101,7 +101,7 @@ export class AppService {
 	// 				ids: [settingsItem.auctionId]
 	// 			})
 
-	// 			await sleep(1000 * 80)
+	// 			await sleep(1000 * 100)
 
 	// 			this.logger.log('>>> Запрашиваю arcFullstats...')
 
@@ -162,7 +162,7 @@ export class AppService {
 			this.logger.log('>>> Настроки для таблицы получены...')
 
 			for (const settingsItem of settings.settings) {
-				await sleep(1000 * 80)
+				await sleep(1000 * 100)
 
 				if (!settings.token) {
 					continue
@@ -184,7 +184,7 @@ export class AppService {
 				]
 
 				for (const date of datesArr) {
-					await sleep(1000 * 80)
+					await sleep(1000 * 100)
 
 					const auctionFullstats = settingsItem.auctionId
 						? await this.wbService.getFullstats({
@@ -196,7 +196,7 @@ export class AppService {
 
 					console.log(auctionFullstats)
 
-					await sleep(1000 * 80)
+					await sleep(1000 * 100)
 
 					this.logger.log('>>> Запрашиваю arcFullstats...')
 

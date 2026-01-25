@@ -23,6 +23,8 @@ export class WbService {
 				}
 			})
 
+			console.log(response)
+
 			if (!response.data) return null
 
 			return response.data
@@ -52,6 +54,8 @@ export class WbService {
 					}
 				}
 			)
+
+			console.log(response)
 
 			if (!response.data) return null
 
@@ -99,6 +103,8 @@ export class WbService {
 					}
 				}
 			)
+
+			console.log(response)
 
 			if (!response.data) return null
 
