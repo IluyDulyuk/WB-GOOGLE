@@ -87,11 +87,11 @@ export class GoogleService {
 					auctionId:
 						auctionRow[i] === '' || !auctionRow[i]
 							? null
-							: String(skuRow[i]).trim(),
+							: String(auctionRow[i]).trim(),
 					arcId:
 						arcRow[i] === '' || !arcRow[i]
 							? null
-							: String(skuRow[i]).trim(),
+							: String(arcRow[i]).trim(),
 					sku: String(skuRow[i]).trim()
 				})
 			}
