@@ -84,8 +84,14 @@ export class GoogleService {
 		for (let i = 0; i < maxLength; i++) {
 			if (skuRow[i]) {
 				settings.push({
-					auctionId: auctionRow[i] || null,
-					arcId: arcRow[i] || null,
+					auctionId:
+						auctionRow[i] === '' || !auctionRow[i]
+							? null
+							: String(skuRow[i]).trim(),
+					arcId:
+						arcRow[i] === '' || !arcRow[i]
+							? null
+							: String(skuRow[i]).trim(),
 					sku: String(skuRow[i]).trim()
 				})
 			}
@@ -203,13 +209,13 @@ export class GoogleService {
 			'',
 			'',
 			funnelStatsDay[0].history[0].orderSum,
-			auctionFullstats[0].views || '',
-			auctionFullstats[0].clicks || '',
-			auctionFullstats[0].ctr || '',
-			auctionFullstats[0].cpc || '',
-			auctionFullstats[0].sum || '',
-			arcFullstats[0].cpc || '',
-			arcFullstats[0].sum || '',
+			auctionFullstats !== null ? auctionFullstats[0].views : '',
+			auctionFullstats !== null ? auctionFullstats[0].clicks : '',
+			auctionFullstats !== null ? auctionFullstats[0].ctr : '',
+			auctionFullstats !== null ? auctionFullstats[0].cpc : '',
+			auctionFullstats !== null ? auctionFullstats[0].sum : '',
+			arcFullstats !== null ? arcFullstats[0].cpc : '',
+			arcFullstats !== null ? arcFullstats[0].sum : '',
 			funnelStatsDay[0].history[0].openCount,
 			funnelStatsDay[0].history[0].cartCount,
 			funnelStatsDay[0].history[0].orderCount,

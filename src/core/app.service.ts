@@ -175,12 +175,12 @@ export class AppService {
 				this.logger.log('>>> Запрашиваю auctionFullstats...')
 
 				const datesArr = [
+					'2026-01-27',
+					'2026-01-26',
+					'2026-01-25',
 					'2026-01-24',
 					'2026-01-23',
-					'2026-01-22',
-					'2026-01-21',
-					'2026-01-20',
-					'2026-01-19'
+					'2026-01-22'
 				]
 
 				for (const date of datesArr.reverse()) {
