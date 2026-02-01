@@ -174,7 +174,12 @@ export class AppService {
 				this.logger.log('>>> Начинаю запрос данных с API WB...')
 				this.logger.log('>>> Запрашиваю auctionFullstats...')
 
-				const datesArr = ['2026-01-27', '2026-01-26', '2026-01-25']
+				const datesArr = [
+					'2026-01-28',
+					'2026-01-29',
+					'2026-01-30',
+					'2026-01-31'
+				]
 
 				for (const date of datesArr.reverse()) {
 					await sleep(1000 * 100)
