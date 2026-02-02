@@ -249,12 +249,17 @@ export class GoogleService {
 			s => s.properties.title === SHEET_NAME
 		).properties.sheetId
 
+		const cleanSku = sku.split(' ')[0]
+		const wbLink = `https://www.wildberries.ru/catalog/${cleanSku}/detail.aspx`
+
 		// 1. Записываем сам SKU в первую колонку новой строки
 		await this.sheets.spreadsheets.values.update({
 			spreadsheetId,
 			range: `${SHEET_NAME}!A${startRow}`,
 			valueInputOption: 'RAW',
-			requestBody: { values: [[sku]] }
+			requestBody: {
+				values: [[sku, `=HYPERLINK("${wbLink}"; "Ссылка на товар")`]]
+			}
 		})
 
 		// 2. Копируем строки 7 и 8 (оформление) и вставляем их под SKU
